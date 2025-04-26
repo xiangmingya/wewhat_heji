@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信合集链接生成器</title>
+    <style>
+        body {
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-4px);
+        }
+        h2 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            resize: vertical;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 16px;
+        }
+        button:hover {
+            background: #0051cc;
+        }
+        .output {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            word-break: break-all;
+            display: none;
+        }
+        .output a {
+            color: #007aff;
+            text-decoration: none;
+        }
+        .output a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #ff3b30;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>微信合集链接生成器</h2>
+        <p>输入微信分页链接以生成合集链接</p>
+        <textarea id="inputLink" placeholder="请粘贴分页链接（例如：https://mp.weixin.qq.com/mp/appmsgalbum?action=paging...）"></textarea>
+        <button onclick="generateLink()">生成合集链接</button>
+        <div id="output" class="output"></div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const inputLink = document.getElementById('inputLink').value.trim();
+            const outputDiv = document.getElementById('output');
+
+            // 正则表达式提取必要参数
+            const bizMatch = inputLink.match(/__biz=([^&]+)/);
+            const albumIdMatch = inputLink.match(/album_id=([^&]+)/);
+            const actionMatch = inputLink.match(/action=([^&]+)/);
+
+            if (bizMatch && albumIdMatch && actionMatch) {
+                const biz = bizMatch[1];
+                const albumId = albumIdMatch[1];
+
+                // 生成相册链接
+                const albumLink = `https://mp.weixin.qq.com/mp/appmsgalbum?__biz=${biz}&action=getalbum&album_id=${albumId}`;
+                
+                outputDiv.style.display = 'block';
+                outputDiv.innerHTML = `<strong>生成的合集链接：</strong><br><a href="${albumLink}" target="_blank">${albumLink}</a>`;
+            } else {
+                outputDiv.style.display = 'block';
+                outputDiv.innerHTML = '<strong class="error">错误：</strong> 无效的输入链接。请确保链接包含 __biz、album_id 和 action 参数。';
+            }
+        }
+    </script>
+</body>
+</html>
